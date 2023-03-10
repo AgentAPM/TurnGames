@@ -203,7 +203,20 @@ namespace ProjectTicTacToe
             bool isTransposition = false;
             foreach(var symmetry in symmetries)
             {
-
+                bool allMatch = true;
+                for(int i=0;i<Board.Length;i++)
+                {
+                    if( Board[i] != other.Board[symmetry[i]])
+                    {
+                        allMatch = false;
+                        break;
+                    }
+                }
+                if (allMatch)
+                {
+                    isTransposition = true;
+                    break;
+                }
             }
             return isTransposition;
         }
