@@ -1,5 +1,9 @@
 ﻿namespace ProjectTicTacToe
 {
+    /*
+        Error: nie podano argumentu dimens
+    */
+    /*
     public class BoardTransposition : BoardState
     {
         private static readonly int[][] symmetries;
@@ -95,4 +99,5 @@
             return isTransposition;
         }
     }
+    //*/
 }

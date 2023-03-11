@@ -9,12 +9,10 @@ namespace ProjectTicTacToe
         public readonly string playerQueue;
         public char PlayerOnMove
         {
-            get
-            {
-                return playerQueue[0];
-            }
+            get { return playerQueue[0]; }
         }
-        public BoardState() : this("XO:         ") { }
+
+        private static Dictionary<string, BoardState> AllBoardStates = new Dictionary<string, BoardState>();
         public BoardState(int[] dimens, string playerQueue)
         {
             Dimens = dimens;
@@ -22,7 +20,7 @@ namespace ProjectTicTacToe
             Board = new string(' ',volume).ToCharArray();
             playerQueue = playerQueue;
         }
-        public BoardState(string positionCode)
+        private BoardState(string positionCode)
         {
             Dimens = new int[] { 3, 3 };
             var sections = positionCode.Split(':');
@@ -31,13 +29,7 @@ namespace ProjectTicTacToe
             Board = sections[1].ToCharArray();
             playerQueue = sections[0];
         }
-        public BoardState(string fromPosition, Move afterMove) : this(fromPosition)
-        {
-            Dimens = new int[] { 3, 3 };
-            Board[afterMove.Tile] = afterMove.Player;
-            playerQueue = playerQueue.Substring(1) + playerQueue[0];
-        }
-        public BoardState(BoardState previousPosition, Move afterMove)
+        private BoardState(BoardState previousPosition, Move afterMove)
         {
             Dimens = previousPosition.Dimens;
             playerQueue = previousPosition.playerQueue;
@@ -47,6 +39,36 @@ namespace ProjectTicTacToe
             Board[afterMove.Tile] = afterMove.Player;
             playerQueue = previousPosition.playerQueue.Substring(1) + previousPosition.playerQueue[0];
         }
+        public static BoardState FromCode(string positionCode)
+        {
+            if (AllBoardStates.ContainsKey(positionCode))
+            {
+                return AllBoardStates[positionCode];
+            }
+            else
+            {
+                var boardState = new BoardState(positionCode);
+                AllBoardStates[positionCode] = boardState;
+                return boardState;
+            }
+        }
+        public BoardState AfterMove(Move move)
+        {
+            var nextState = new BoardState(this, move);
+
+            var newPositionCode = nextState.ToString();
+            if (AllBoardStates.ContainsKey(newPositionCode))
+            {
+                nextState = AllBoardStates[newPositionCode];
+            }
+            else
+            {
+                AllBoardStates[newPositionCode] = nextState;
+            }
+
+            return nextState;
+        }
+
         private Move[] moves = null;
         public Move[] PossibleMoves
         {

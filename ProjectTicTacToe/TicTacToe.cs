@@ -5,7 +5,6 @@ namespace ProjectTicTacToe
     {
         const string playerIcons = "XOSHABCDEFGIJKLMNPQRSTUVWYZ";
         private string playerOrder;
-        public Dictionary<string, BoardState> TicTacToePositions = new Dictionary<string, BoardState>();
         private BoardState CurrentState;
         private Dictionary<char, IPlayer> Players;
         private bool keepPlaying = true;
@@ -41,28 +40,25 @@ namespace ProjectTicTacToe
         private void InitRound()
         {
             keepPlaying = true;
-            CurrentState = new BoardState("XO:         ");
-            
+            CurrentState = BoardState.FromCode("XO:         ");
+
         }
         private void GameLoop()
         {
             while (CurrentState.Winner == ' ')
             {
-                Console.WriteLine($"{CurrentState.PlayerOnMove} na ruchu:");
-                Console.WriteLine(CurrentState.Draw());
+                Console.Write(CurrentState.Draw());
+                Console.WriteLine($"{CurrentState.PlayerOnMove} na ruchu");
 
                 var move = Players[CurrentState.PlayerOnMove].GetMove(CurrentState);
-                CurrentState = new BoardState(CurrentState, move);
+                CurrentState = CurrentState.AfterMove(move);
 
                 var code = CurrentState.ToString();
-
-                if (TicTacToePositions.ContainsKey(code)) CurrentState = TicTacToePositions[code];
-                else TicTacToePositions[code] = CurrentState;
             }
         }
         private void RoundEnd()
         {
-            Console.WriteLine(CurrentState.Draw());
+            Console.Write(CurrentState.Draw());
             if (CurrentState.Winner != '-')
                 Console.WriteLine($"Wygrywa {CurrentState.Winner}!!!");
             else

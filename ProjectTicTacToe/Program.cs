@@ -10,7 +10,7 @@ namespace ProjectTicTacToe
         public static int Main(string[] args)
         {
             var game = new TicTacToe(new IPlayer[] { 
-                new ConsolePlayer(),
+                new RandomPlayer(),
                 new ConsolePlayer(),
             });
 
