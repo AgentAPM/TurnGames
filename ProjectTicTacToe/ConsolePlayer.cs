@@ -3,10 +3,13 @@
     public class ConsolePlayer : IPlayer
     {
         public char Icon { get; set; } = '?';
+
+        public event GameEvent OnMakeMove;
         public ConsolePlayer()
         {
 
         }
+
         public Move GetMove(BoardState position)
         {
             var moves = position.PossibleMoves;
@@ -61,6 +64,8 @@
                     Console.WriteLine("Podany ruch jest niepoprawny.");
 
             } while (!correct);
+
+            OnMakeMove?.Invoke( this);
 
             return move;
         }

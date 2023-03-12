@@ -3,94 +3,73 @@ namespace ProjectTicTacToe
 {
     public class TicTacToe
     {
-        const string playerIcons = "XOSHABCDEFGIJKLMNPQRSTUVWYZ";
+        public const string playerIcons = "XOSHABCDEFGIJKLMNPQRSTUVWYZ";
+        private readonly string StartingPosition = "XO:         ";
         private string playerOrder;
-        private BoardState CurrentState;
-        private Dictionary<char, IPlayer> Players;
-        private bool keepPlaying = true;
-        private int[] dimens;
+        private Dictionary<char, IPlayer> PlayersOnMove;
+        public BoardState CurrentState { get; private set; }
+        public bool KeepPlaying { get; set; } = true;
+        private int[] Dimens { get; set; }
+        public IPlayer[] Players { get; private set; }
+
+
+        public event GameEvent OnGameStart;
+        public event GameEvent OnGameEnd;
+        public event GameEvent OnRoundStart;
+        public event GameEvent OnRoundEnd;
+        public event GameEvent OnTurnStart;
+        public event GameEvent OnTurnEnd;
+
+
         public TicTacToe(IPlayer[] players, int[] dimens)
         {
-            this.dimens = dimens;
+            Dimens = dimens;
+            Players = players;
             playerOrder = playerIcons.Substring(0, players.Length);
 
-            Players = new Dictionary<char, IPlayer>();
+            PlayersOnMove = new Dictionary<char, IPlayer>();
             for (int i = 0; i < players.Length; i++)
             {
                 players[i].Icon = playerIcons[i];
-                Players[playerOrder[i]] = players[i];
+                PlayersOnMove[playerOrder[i]] = players[i];
             }
         }
         public TicTacToe(IPlayer[] players) : this(players, new int[] { 3, 3 }) { }
-        public void EnterGame()
+        public void StartGame()
         {
-            while (keepPlaying)
+            KeepPlaying = true;
+
+            OnGameStart?.Invoke(this);
+
+            while (KeepPlaying)
             {
                 InitRound();
+                OnRoundStart?.Invoke(this);
 
                 GameLoop();
 
-                RoundEnd();
+                OnRoundEnd?.Invoke(this);
             }
 
-            Console.WriteLine("Dziękuję za grę");
+            OnGameEnd?.Invoke(this);
         }
 
 
         private void InitRound()
         {
-            keepPlaying = true;
-            CurrentState = BoardState.FromCode("XO:         ");
-
+            CurrentState = BoardState.FromCode(StartingPosition);
         }
         private void GameLoop()
         {
             while (CurrentState.Winner == ' ')
             {
-                Console.Write(CurrentState.Draw());
-                Console.WriteLine($"{CurrentState.PlayerOnMove} na ruchu");
+                OnTurnStart?.Invoke(this);
 
-                var move = Players[CurrentState.PlayerOnMove].GetMove(CurrentState);
+                var move = PlayersOnMove[CurrentState.PlayerOnMove].GetMove(CurrentState);
                 CurrentState = CurrentState.AfterMove(move);
 
-                var code = CurrentState.ToString();
+                OnTurnEnd?.Invoke(this);
             }
-        }
-        private void RoundEnd()
-        {
-            Console.Write(CurrentState.Draw());
-            if (CurrentState.Winner != '-')
-                Console.WriteLine($"Wygrywa {CurrentState.Winner}!!!");
-            else
-                Console.WriteLine("Remis.");
-
-            Console.WriteLine("Zagrać jeszcze raz?");
-
-            string input;
-            bool wrongInput = false;
-            do
-            {
-                wrongInput = false;
-                input = Console.ReadLine();
-                switch (input)
-                {
-                    case "t":
-                    case "T":
-                    case "tak":
-                        keepPlaying = true;
-                        break;
-                    case "n":
-                    case "N":
-                    case "nie":
-                        keepPlaying = false;
-                        break;
-                    default:
-                        Console.WriteLine("Błędna komenda");
-                        wrongInput = true;
-                        break;
-                }
-
-            } while (wrongInput);
         }
     }
 }
