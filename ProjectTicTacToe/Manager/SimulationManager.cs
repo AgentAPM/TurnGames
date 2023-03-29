@@ -6,7 +6,7 @@
         {
             var keeper = new StatKeeper(game.Players);
 
-            game.OnRoundEnd += (object sender, EventArgs e) =>
+            game.OnRoundEnd += (sender, e) =>
             {
                 if (!(sender is TicTacToe)) throw new Exception("Sender error");
                 var game = sender as TicTacToe;
@@ -15,19 +15,19 @@
             };
 
             int epoch = 0;
-            game.OnRoundEnd += (object sender, EventArgs e) =>
+            game.OnRoundEnd += (sender, e) =>
             {
                 if (!(sender is TicTacToe)) throw new Exception("Sender error");
                 var game = sender as TicTacToe;
 
                 epoch++;
-                if (epoch >= epochs)
-                {
+                if (epoch < epochs)
+                    game.KeepPlaying = true;
+                else
                     game.KeepPlaying = false;
-                }
             };
 
-            game.OnGameEnd += (object sender, EventArgs e) =>
+            game.OnGameEnd += (sender, e) =>
             {
                 keeper.PrintGameResults();
             };

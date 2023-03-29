@@ -8,19 +8,9 @@
 
         public event GameEvent OnMakeMove;
 
-        public static void SayMove(object sender, EventArgs e)
-        {
-            var familiarity = 0;
-            if (familiarity == 0)
-                Console.WriteLine($"Komputer jeszcze nie widział tej pozycji.");
-            else if (familiarity == 1)
-                Console.WriteLine($"Komputer widział tę pozycję {familiarity} raz.");
-            else
-                Console.WriteLine($"Komputer widział tę pozycję już {familiarity} razy.");
-        }
         public Move GetMove(BoardState position)
         {
-            var positionCode = position.ToString();
+            var positionCode = position.PositionCode;
             if (!memories.ContainsKey(positionCode))
                 memories[positionCode] = 0;
 
@@ -35,7 +25,7 @@
 
             foreach (var move in moves)
             {
-                var actionCode = ToAction(position, move);
+                var actionCode = move.ToAction(position);
                 uint actionFamiliarity = 0;
 
                 if (memories.ContainsKey(actionCode))
@@ -56,14 +46,10 @@
             int pick = RNG.Next(moveCandidates.Count);
             var pickedMove = moveCandidates[pick];
 
-            ++memories[ToAction(position, pickedMove)];
+            ++memories[pickedMove.ToAction(position)];
 
 
             return pickedMove;
-        }
-        private string ToAction(BoardState state, Move move)
-        {
-            return $"{state}>{move.Tile}";
         }
 
         internal class ExplorerMoveArgs : EventArgs

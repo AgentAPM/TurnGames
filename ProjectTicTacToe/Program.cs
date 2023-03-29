@@ -1,47 +1,58 @@
-﻿
-
-using System.Net.Http.Headers;
-using System.Security.Cryptography;
-
-namespace ProjectTicTacToe
+﻿namespace ProjectTicTacToe
 {
     public static class Program
     {
         public static int Main(string[] args)
         {
-            CasualPlay();
-            //SimulateGame();
+            //var playerX = new ConsolePlayer();
+            //var playerX = new ExplorerPlayer();
+            var playerX = new BruteForcePlayer();
+            //playerX.OnMakeMove += ExplorerPlayer.SayOnMakeMove;
+            //var playerX = new RandomPlayer();
+            //playerX.OnMakeMove += RandomPlayer.SayOnMakeMove;
+            playerX.OnMakeMove += BruteForcePlayer.SayOnMakeMove;
 
+            //var playerO = new ConsolePlayer();
+            //var playerO = new RandomPlayer();
+            //var playerO = new QLearningPlayer();
+            //playerO.OnMakeMove += QLearningPlayer.SayOnMakeMove;
+            var playerO = new ExplorerPlayer();
+            playerO.OnMakeMove += ExplorerPlayer.SayOnMakeMove;
+            //var playerO = new BruteForcePlayer();
+            //playerO.OnMakeMove += BruteForcePlayer.SayOnMakeMove;
+
+            /*
+            playerO.LearningRate = 0;
+            playerO.Epsillon = 1;
+            playerO.OnMakeMove += QLearningPlayer.SayOnMakeMove;
+            */
+            
+            CasualPlay(new IPlayer[] {
+                    playerX,
+                    playerO,
+                });
+            
+            /*
+            SimulateGame(new IPlayer[] {
+                    playerX,
+                    playerO,
+                },10000);
+            */
             return 0;
         }
 
-        public static void CasualPlay()
+        public static void CasualPlay(IPlayer[] players)
         {
-            var playerX = new ConsolePlayer();
-            //playerX.OnMakeMove += ExplorerPlayer.SayOnMakeMove;
 
-            var playerO = new ExplorerPlayer();
-            playerO.OnMakeMove += ExplorerPlayer.SayOnMakeMove;
-
-            var game = new TicTacToe(new IPlayer[] {
-                    playerX,
-                    playerO,
-                });
+            var game = new TicTacToe(players);
 
             GameManager.Play(game);
         }
-        public static void SimulateGame()
+        public static void SimulateGame(IPlayer[] players,int epochs)
         {
-            var playerX = new ExplorerPlayer();
+            var game = new TicTacToe(players);
 
-            var playerO = new ExplorerPlayer();
-
-            var game = new TicTacToe(new IPlayer[] {
-                    playerX,
-                    playerO,
-                });
-
-            SimulationManager.Play(game,9*9*9*9*9);
+            SimulationManager.Play(game,epochs);
         }
     }
 }

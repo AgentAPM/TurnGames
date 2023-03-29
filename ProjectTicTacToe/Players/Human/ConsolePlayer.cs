@@ -65,7 +65,7 @@
 
             } while (!correct);
 
-            OnMakeMove?.Invoke( this);
+            OnMakeMove?.Invoke(this);
 
             return move;
         }

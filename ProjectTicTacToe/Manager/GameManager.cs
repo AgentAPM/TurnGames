@@ -6,7 +6,7 @@
         {
             var keeper = new StatKeeper(game.Players);
 
-            game.OnRoundEnd += (object sender, EventArgs e) =>
+            game.OnRoundEnd += (sender, e) =>
             {
                 if (!(sender is TicTacToe)) throw new Exception("Sender error");
                 var game = sender as TicTacToe;
@@ -18,7 +18,7 @@
                     Console.WriteLine("Remis.");
             };
 
-            game.OnRoundEnd += (object sender, EventArgs e) =>
+            game.OnRoundEnd += (sender, e) =>
             {
                 if (!(sender is TicTacToe)) throw new Exception("Sender error");
                 var game = sender as TicTacToe;
@@ -27,16 +27,20 @@
 
             };
 
-            game.OnTurnStart += (object sender, EventArgs e) =>
+            game.OnTurnStart += (sender, e) =>
             {
                 if (!(sender is TicTacToe)) throw new Exception("Sender error");
                 var game = sender as TicTacToe;
 
+                Console.WriteLine($"{game.CurrentState.PlayerOnMove} na ruchu:");
                 Console.Write(game.CurrentState.Draw());
-                Console.WriteLine($"{game.CurrentState.PlayerOnMove} na ruchu");
+            };
+            game.OnTurnEnd += (sender, e) =>
+            {
+                Console.WriteLine();
             };
             game.OnRoundEnd += PromptRestartRound;
-            game.OnGameEnd += (object sender, EventArgs e) =>
+            game.OnGameEnd += (sender, e) =>
             {
                 keeper.PrintGameResults();
             };

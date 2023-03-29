@@ -9,10 +9,6 @@
             Tile = tile;
             Player = player;
         }
-        public static Move FromInput(string input)
-        {
-            return new Move(0, 'X');
-        }
         public override bool Equals(object? obj)
         {
             if (!(obj is Move)) return false;
@@ -20,6 +16,14 @@
             var other = obj as Move;
 
             return this.Tile == other.Tile && this.Player == other.Player;
+        }
+        public static string ToAction(BoardState fromPosition, Move move)
+        {
+            return $"{fromPosition}>{move.Tile}";
+        }
+        public string ToAction(BoardState fromPosition)
+        {
+            return ToAction(fromPosition, this);
         }
     }
 }

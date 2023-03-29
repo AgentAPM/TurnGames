@@ -17,7 +17,7 @@ namespace ProjectTicTacToe
         {
             Dimens = dimens;
             int volume = dimens.Aggregate((int value, int accumulator) => accumulator * value);
-            Board = new string(' ',volume).ToCharArray();
+            Board = new string(' ', volume).ToCharArray();
             playerQueue = playerQueue;
         }
         private BoardState(string positionCode)
@@ -42,9 +42,7 @@ namespace ProjectTicTacToe
         public static BoardState FromCode(string positionCode)
         {
             if (AllBoardStates.ContainsKey(positionCode))
-            {
                 return AllBoardStates[positionCode];
-            }
             else
             {
                 var boardState = new BoardState(positionCode);
@@ -56,15 +54,11 @@ namespace ProjectTicTacToe
         {
             var nextState = new BoardState(this, move);
 
-            var newPositionCode = nextState.ToString();
+            var newPositionCode = nextState.PositionCode;
             if (AllBoardStates.ContainsKey(newPositionCode))
-            {
                 nextState = AllBoardStates[newPositionCode];
-            }
             else
-            {
                 AllBoardStates[newPositionCode] = nextState;
-            }
 
             return nextState;
         }
@@ -89,13 +83,32 @@ namespace ProjectTicTacToe
                 return moves;
             }
         }
+        private string _positionCode = null;
+        public string PositionCode
+        {
+            get
+            {
+                if (_positionCode == null)
+                {
+                    var sb = new StringBuilder();
+
+                    sb.Append(playerQueue);
+                    sb.Append(':');
+                    sb.Append(Board);
+
+                    _positionCode = sb.ToString();
+                }
+
+                return _positionCode;
+            }
+            private set
+            {
+                _positionCode = value;
+            }
+        }
         public override string ToString()
         {
-            var sb = new StringBuilder();
-            sb.Append(playerQueue);
-            sb.Append(':');
-            sb.Append(Board);
-            return sb.ToString();
+            return PositionCode;
         }
         private char winner = '_';
         public char Winner
@@ -125,13 +138,9 @@ namespace ProjectTicTacToe
                                 }
                             }
                             if (emptyTileExists)
-                            {
                                 winner = ' ';
-                            }
                             else
-                            {
                                 winner = '-';
-                            }
                         }
                 }
                 return winner;
@@ -140,7 +149,8 @@ namespace ProjectTicTacToe
         public override bool Equals(object? obj)
         {
             if (!(obj is BoardState)) return false;
-            return ToString() == obj.ToString();
+            BoardState other = obj as BoardState;
+            return PositionCode == other.PositionCode;
         }
         public string Draw()
         {
@@ -155,7 +165,6 @@ namespace ProjectTicTacToe
                 sb.Append("|\n");
             }
             return sb.ToString();
-            //return $"|{Board[0]}{Board[1]}{Board[2]}|\n|{Board[3]}{Board[4]}{Board[5]}|\n|{Board[6]}{Board[7]}{Board[8]}|\n";
         }
     }
 }

@@ -1,6 +1,4 @@
-﻿using System.ComponentModel;
-
-namespace ProjectTicTacToe
+﻿namespace ProjectTicTacToe
 {
     public interface IPlayer
     {

@@ -1,5 +1,4 @@
-﻿
-namespace ProjectTicTacToe
+﻿namespace ProjectTicTacToe
 {
     public class TicTacToe
     {
@@ -48,6 +47,7 @@ namespace ProjectTicTacToe
 
                 GameLoop();
 
+                KeepPlaying = false;
                 OnRoundEnd?.Invoke(this);
             }
 

@@ -1,28 +1,15 @@
 ﻿namespace ProjectTicTacToe
 {
-    public class Record
-    {
-        public int wins;
-        public int losses;
-        public int draws;
-
-        public Record()
-        {
-            wins = 0;
-            losses = 0;
-            draws = 0;
-        }
-    }
     public class StatKeeper
     {
-        public Dictionary<char, Record> Records;
+        public Dictionary<char, WLDcount> Records;
         public StatKeeper(IPlayer[] players)
         {
-            Records = new Dictionary<char, Record>();
+            Records = new Dictionary<char, WLDcount>();
             for (int i = 0; i < players.Length; i++)
             {
                 char icon = TicTacToe.playerIcons[i];
-                Records[icon] = new Record();
+                Records[icon] = new WLDcount();
             }
         }
         public void RecordRoundResult(TicTacToe game)
@@ -47,7 +34,7 @@
         }
         public void PrintGameResults()
         {
-            foreach(var pair in Records)
+            foreach (var pair in Records)
             {
                 var icon = pair.Key;
                 var record = pair.Value;
