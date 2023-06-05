@@ -5,9 +5,11 @@ VisualStudioVersion = 17.5.33414.496
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TurnGames", "TurnGames\TurnGames.csproj", "{67ECFBE9-0817-4C4A-A0C8-55FD2318CE22}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProjectZipZap", "ZipZap\ProjectZipZap.csproj", "{EDB4117C-A67F-4D5D-9753-AF3DD01D0431}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ProjectZipZap", "ZipZap\ProjectZipZap.csproj", "{EDB4117C-A67F-4D5D-9753-AF3DD01D0431}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProjectTicTacToe", "ProjectTicTacToe\ProjectTicTacToe.csproj", "{35F550F7-BEAF-4281-810D-99291DB54423}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ProjectTicTacToe", "ProjectTicTacToe\ProjectTicTacToe.csproj", "{35F550F7-BEAF-4281-810D-99291DB54423}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProjectResourceMakers", "ProjectResourceMakers\ProjectResourceMakers.csproj", "{F6E4E5D2-9B02-4B03-979A-9BDD3226AC4D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -27,6 +29,10 @@ Global
 		{35F550F7-BEAF-4281-810D-99291DB54423}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{35F550F7-BEAF-4281-810D-99291DB54423}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{35F550F7-BEAF-4281-810D-99291DB54423}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F6E4E5D2-9B02-4B03-979A-9BDD3226AC4D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F6E4E5D2-9B02-4B03-979A-9BDD3226AC4D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F6E4E5D2-9B02-4B03-979A-9BDD3226AC4D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F6E4E5D2-9B02-4B03-979A-9BDD3226AC4D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
