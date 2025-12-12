@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Tomb of four Kings</title>
+	<style>
+
+html,body {
+	margin: 0;
+}
+
+	</style>
+</head>
+<body>
+	
+	<main>
+		<div id="adventure-log"></div>
+		<div id="inventory"></div>
+		<div id="dungeon"></div>
+	</main>
+
+	<style>
+main {
+	display: grid;
+	grid-template-areas:
+		"inv log"
+		"map log";
+	grid-template-rows: 800px 400px;
+	grid-template-columns: 800px 600px;
+	
+	margin: auto;
+	width: max-content;
+}
+
+
+#adventure-log {
+  font-family: 'Roboto', sans-serif;
+  background: #0b0e1c;
+  border: 2px solid #445;
+  padding: 14px;
+  max-height: 320px;
+  overflow-y: auto;
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  color: #cde;
+}
+
+/* Scrollbar */
+#adventure-log::-webkit-scrollbar { width: 8px; }
+#adventure-log::-webkit-scrollbar-thumb { background: #6bf; border-radius: 4px; }
+
+.log-entry {
+  background: rgba(20, 30, 60, 0.6);
+  border: 1px solid #6bf;
+  padding: 12px;
+  border-radius: 8px;
+  box-shadow: 0 0 8px rgba(100,150,255,0.3);
+}
+
+.log-msg {
+  margin-bottom: 8px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+
+.log-options button {
+  background: rgba(80,120,255,0.25);
+  border: 1px solid #8af;
+  padding: 5px 12px;
+  border-radius: 6px;
+  color: #def;
+  cursor: pointer;
+  transition: .12s;
+}
+
+.log-options button:hover:not(.selected) {
+  background: rgba(100,150,255,0.35);
+}
+
+.log-options button.selected {
+  background: #8af;
+  color: #001;
+}
+
+
+
+
+
+
+
+#adventure-log {
+	grid-area: log;
+	padding-bottom: 100px;
+	box-sizing: border-box;
+	max-height: revert;
+}
+
+#inventory {
+	grid-area: inv;
+	background-color: sienna;
+}
+
+#dungeon {
+	grid-area: map;
+	background-color: saddlebrown;
+}
+
+	</style>
+		
+	
+	
+	
+	<script>
+
+
+
+function makeDeck(){}
+function shuffle(){}
+
+class TombOfFourKings{
+	constructor(){
+		this.state = "off";
+	}
+	setup(seed){
+		this.deck = shuffled(makeDeck());
+		this.hp = 9;
+		this.inventory = {
+			dodge: 0,
+			lockpick: 0,
+			disarm: 0,
+			berzerker: 0,
+			scroll: 0,
+			treasure: [],
+		};
+	}
+	advance(decision){
+		switch(this.state){
+			case "off":
+				this.initGame();
+			break;
+		}
+	}
+}
+
+
+class TestGame{
+	constructor(){
+		this.state = "off";
+	}
+	setup(seed){
+		this.digits = [0,0,0,0];
+		
+		this.pushLog("Test game begins",[]);
+		
+		this.state = "hours-tens";
+		this.pushLog("Pick the tens digit of the current time",["0","1","2"]);
+	}
+	advance(decision){
+		switch(this.state){
+			case "off":
+				this.setup();
+			break;
+			
+			case "hours-tens":
+				if(decision<0 || decision>2){this.stateError(); break;}
+				this.digits[0] = decision;
+				this.state = "hours-units"
+				if(this.digits[0]==2)
+					this.pushLog("Pick the units digit of the current time",["0","1","2","3"]);
+				else
+					this.pushLog("Pick the units digit of the current time",["0","1","2","3","4","5","6","7","8","9"]);
+			break;
+			
+			case "hours-units":
+				if(decision<0 || decision>9 || (this.digits[0]===2 && decision>4)){this.stateError(); break;}
+				this.digits[1] = decision;
+				this.state = "minutes-tens"
+				this.pushLog("Pick the tens digit of the minutes",["0","1","2","3","4","5"]);
+			break;
+			
+			case "minutes-tens":
+				if(decision<0 || decision>5){this.stateError(); break;}
+				this.digits[2] = decision;
+				this.state = "minutes-units"
+				this.pushLog("Pick the units digit of the minutes",["0","1","2","3","4","5","6","7","8","9"]);
+			break;
+			
+			case "minutes-units":
+				if(decision<0 || decision>9){this.stateError(); break;}
+				this.digits[3] = decision;
+				this.state = "ending"
+				this.pushLog(`You entered the time: ${this.digits[0]}${this.digits[1]}:${this.digits[2]}${this.digits[3]}.`,["enter another time"]);
+			break;
+			
+			case "ending":
+				if(decision<0 || decision>0){this.stateError(); break;}
+				this.state = "off"
+				
+				this.setup();
+			break;
+			
+			
+		}
+	}
+	stateError(){
+		this.state = "off";
+		this.pushLog("Unhandled decision",["reset"]);
+	}
+
+	pushLog(msg,options=["continue"]){
+		const d_msg = document.createElement("div");
+		d_msg.classList.add("log-msg")
+		d_msg.innerText = msg;
+		
+		const d_options = document.createElement("div");
+		d_options.classList.add("log-options")
+		const buttons = options.map((txt,i)=>{
+			const btn = document.createElement("button");
+			btn.innerText = txt;
+			btn.className = "decision";
+			return btn;
+		})
+		buttons.forEach((btn,i)=>{
+			btn.addEventListener("click", evt=>{
+				for(const b of buttons){
+					b.disabled = true;
+				}
+				btn.classList.add("selected");
+				this.advance(i);
+			});
+			d_options.appendChild(btn);
+		})
+		
+		const d_wrapper = document.createElement("div");
+		d_wrapper.classList.add("log-entry");
+		d_wrapper.appendChild(d_msg);
+		d_wrapper.appendChild(d_options);
+		anchors.log.appendChild(d_wrapper);
+		
+		anchors.log.scrollTo({
+			top: Math.max(0, anchors.log.scrollHeight),
+			behavior: "smooth",
+		});
+	}
+	
+	onadvance={
+		"monster":(decision)=>{},
+		"trapchest":(decision)=>{},
+		"lockeddoor":(decision)=>{},
+		"divinefavor":(decision)=>{},
+	}
+}
+
+const anchors = {
+	log: document.getElementById("adventure-log"),
+	map: document.getElementById("dungeon"),
+	inventory: document.getElementById("inventory"),
+}
+
+//var game = new TombOfFourKings();
+var game = new TestGame();
+game.setup();
+
+	</script>
+</body>
+</html>

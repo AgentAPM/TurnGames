@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Solitaire Dungeon Crawler</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      margin: 20px;
+    }
+
+    #start-btn {
+      margin-bottom: 20px;
+    }
+
+    .dungeon {
+      display: grid;
+      grid-template-rows: auto auto;
+      grid-auto-flow: column;
+      gap: 10px;
+      overflow-x: auto;
+      padding: 10px;
+      border: 1px solid #ccc;
+      max-width: 100%;
+    }
+
+    .card {
+      width: 60px;
+      height: 90px;
+      border: 1px solid #333;
+      border-radius: 5px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      background-color: white;
+    }
+
+    .face-down {
+      background-color: #333;
+      color: transparent;
+    }
+  </style>
+</head>
+<body>
+
+  <button id="start-btn">Start</button>
+
+  <div class="dungeon" id="dungeon">
+    <!-- Row 1: shuffled deck -->
+    <!-- Row 2: fixed cards -->
+  </div>
+
+  <script src="aigame.js"></script>
+</body>
+</html>
