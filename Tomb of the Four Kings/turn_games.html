@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Turn Games</title>
+
+	<style>
+body {
+	margin: 0;
+}
+
+main {
+	max-width: 500px;
+	height: 500px;
+	margin-inline: auto;
+}
+/*
+#log {
+  font-family: system-ui, sans-serif;
+  background: #fdfdfd;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 12px;
+  height: 100%;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+#log::-webkit-scrollbar { width: 8px; }
+#log::-webkit-scrollbar-track { background: #eee; }
+#log::-webkit-scrollbar-thumb { background: #ccc; border-radius: 4px; }
+
+.log-entry {
+  background: #fff;
+  border: 1px solid #eee;
+  border-radius: 6px;
+  padding: 10px;
+  box-shadow: 0 1px 2px rgba(0,0,0,.05);
+}
+
+.log-msg { font-weight: 600; margin-bottom: 6px; }
+
+.log-options button {
+  background: #f0f0f0;
+  border: 1px solid #d7d7d7;
+  padding: 4px 10px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: .15s;
+}
+
+.log-options button:hover:not(.selected) { background: #e5e5e5; }
+.log-options button.selected { background: #bbb; color: #fff; }
+*/
+
+
+	</style>
+</head>
+<body>
+	<main>
+		<div id="log">
+		</div>
+	</main>
+	<script>
+
+class StateMachine{
+	constructor(){
+		this._choices = [];
+		this._events = {};
+	}
+	setup(){}//init new game
+
+	choose(i){
+		const choice = this._choices[i];
+		this._choices = [];
+		if(choice){
+			choice();
+		}
+	}
+
+	on(evt,fn){
+		(this._events[evt] ??= []).push(fn);
+	}
+	emit(evt,arg){
+		(this._events[evt] ??= []).forEach(fn=>fn(arg));		
+	}
+}
+
+class TestGame extends StateMachine{
+	setup(){
+		this.emit("msg","The game starts");
+		this._choices=[
+			()=>{
+				this.emit("msg","You chose to start.");
+				this._choices = [
+					()=>{
+						this.setup();
+					}
+				];
+				this.emit("choice",["play again"]);
+			},
+			()=>{
+				this.emit("msg","You chose to resign.");
+				this._choices = [
+					()=>{
+						this.setup();
+					}
+				];
+				this.emit("choice",["play again"]);
+			},
+		]
+		this.emit("choice",["start","resign"]);
+	}
+}
+
+
+
+function connect(sm){
+	const el_log = document.getElementById("log");
+	sm.on("msg",(txt)=>{
+		const el = document.createElement("div");
+		el.classList.add("log-entry");
+		el.innerText = txt;
+
+		el_log.appendChild(el);
+		el_log.scrollTo({
+			top: el_log.scrollHeight,
+			behavior: "smooth",
+		});
+	});
+	sm.on("choice",(opts)=>{
+		const el = document.createElement("div");
+		el.classList.add("log-options");
+		const buttons = opts.map((txt,idx)=>{
+			const btn = document.createElement("button");
+			btn.innerText = txt;
+			return btn;
+		});
+		buttons.forEach((btn,idx) => {
+			btn.addEventListener("click",()=>{
+				btn.classList.add("selected");
+				buttons.forEach(b=>{
+					b.disabled = true;
+				});
+				sm.choose(idx);
+			})
+			el.appendChild(btn);
+		});
+		el_log.appendChild(el);
+		el_log.scrollTo({
+			top: el_log.scrollHeight,
+			behavior: "smooth",
+		});
+	})
+}
+
+var game = new TestGame();
+connect(game);
+game.setup();
+
+	</script>
+</body>
+</html>
