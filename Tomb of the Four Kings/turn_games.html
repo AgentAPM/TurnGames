@@ -15,18 +15,18 @@ main {
 	height: 500px;
 	margin-inline: auto;
 }
-/*
+
 #log {
-  font-family: system-ui, sans-serif;
-  background: #fdfdfd;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  padding: 12px;
-  height: 100%;
-  overflow-y: auto;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
+	font-family: system-ui, sans-serif;
+	background: #fdfdfd;
+	border: 1px solid #ddd;
+	border-radius: 8px;
+	padding: 12px;
+	height: 100%;
+	overflow-y: auto;
+	display: flex;
+	flex-direction: column;
+	gap: 12px;
 }
 
 #log::-webkit-scrollbar { width: 8px; }
@@ -34,28 +34,31 @@ main {
 #log::-webkit-scrollbar-thumb { background: #ccc; border-radius: 4px; }
 
 .log-entry {
-  background: #fff;
-  border: 1px solid #eee;
-  border-radius: 6px;
-  padding: 10px;
-  box-shadow: 0 1px 2px rgba(0,0,0,.05);
+	background: #fff;
+	border: 1px solid #eee;
+	border-radius: 6px;
+	padding: 10px;
+	box-shadow: 0 1px 2px rgba(0,0,0,.05);
 }
 
 .log-msg { font-weight: 600; margin-bottom: 6px; }
 
 .log-options button {
-  background: #f0f0f0;
-  border: 1px solid #d7d7d7;
-  padding: 4px 10px;
-  border-radius: 4px;
-  cursor: pointer;
-  transition: .15s;
+	background: #f0f0f0;
+	border: 1px solid #d7d7d7;
+	padding: 4px 10px;
+	border-radius: 4px;
+	cursor: pointer;
+	transition: .15s;
 }
 
 .log-options button:hover:not(.selected) { background: #e5e5e5; }
 .log-options button.selected { background: #bbb; color: #fff; }
-*/
 
+#log {
+	box-sizing: border-box;
+	padding-bottom: 200px;
+}
 
 	</style>
 </head>
@@ -66,64 +69,55 @@ main {
 	</main>
 	<script>
 
-class StateMachine{
-	constructor(){
-		this._choices = [];
+
+
+class StateMachine {
+	constructor() {
 		this._events = {};
-	}
-	setup(){}//init new game
-
-	choose(i){
-		const choice = this._choices[i];
 		this._choices = [];
-		if(choice){
-			choice();
-		}
+		this._states = {};
 	}
 
-	on(evt,fn){
+	on(evt, fn) {
 		(this._events[evt] ??= []).push(fn);
 	}
-	emit(evt,arg){
-		(this._events[evt] ??= []).forEach(fn=>fn(arg));		
+
+	emit(evt) {
+		(this._events[evt.type] ??= []).forEach(fn => fn(evt));
 	}
+
+	msg(text){
+		this.emit({
+			type:"msg",
+			text:text,
+		})
+	}
+	
+	decision(options) {
+		this._choices = options.filter(o => !o.omit);
+		this.emit({
+			type: "choice",
+			labels: this._choices.map(o => o.label),
+		});
+	}
+
+	choose(i) {
+		const c = this._choices[i];
+		this._choices = [];
+		if(c) c.run();
+	}
+	
+	setup(){}
 }
 
-class TestGame extends StateMachine{
-	setup(){
-		this.emit("msg","The game starts");
-		this._choices=[
-			()=>{
-				this.emit("msg","You chose to start.");
-				this._choices = [
-					()=>{
-						this.setup();
-					}
-				];
-				this.emit("choice",["play again"]);
-			},
-			()=>{
-				this.emit("msg","You chose to resign.");
-				this._choices = [
-					()=>{
-						this.setup();
-					}
-				];
-				this.emit("choice",["play again"]);
-			},
-		]
-		this.emit("choice",["start","resign"]);
-	}
-}
-
-
+</script><script src="game_impl.js"></script><script>
 
 function connect(sm){
 	const el_log = document.getElementById("log");
-	sm.on("msg",(txt)=>{
+	sm.on("msg",(evt)=>{
 		const el = document.createElement("div");
 		el.classList.add("log-entry");
-		el.innerText = txt;
+		el.innerText = evt.text;
 
 		el_log.appendChild(el);
 		el_log.scrollTo({
@@ -131,10 +125,10 @@ function connect(sm){
 			behavior: "smooth",
 		});
 	});
-	sm.on("choice",(opts)=>{
+	sm.on("choice",(evt)=>{
 		const el = document.createElement("div");
 		el.classList.add("log-options");
-		const buttons = opts.map((txt,idx)=>{
+		const buttons = evt.labels.map((txt,idx)=>{
 			const btn = document.createElement("button");
 			btn.innerText = txt;
 			return btn;
@@ -157,7 +151,7 @@ function connect(sm){
 	})
 }
 
-var game = new TestGame();
+var game = new TombOfFourKings();
 connect(game);
 game.setup();
 
